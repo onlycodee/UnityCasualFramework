@@ -1,0 +1,64 @@
+# HyperFrame CI (TS-04): architecture gate, then EditMode + PlayMode tests in batchmode via GameCI.
+# Required repository secrets (see docs/SETUP.md): UNITY_LICENSE (or UNITY_SERIAL), UNITY_EMAIL, UNITY_PASSWORD.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  architecture:
+    name: Architecture check (no Unity needed)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 Tools/ci/check_architecture.py
+
+  tests:
+    name: Unity ${{ matrix.testMode }} tests
+    needs: architecture
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        testMode: [editmode, playmode]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ matrix.testMode }}-${{ hashFiles('Packages/manifest.json', 'Packages/**/package.json', 'ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: Library-${{ matrix.testMode }}-
+
+      - name: Run tests
+        id: tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: artifacts/${{ matrix.testMode }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: ${{ matrix.testMode }} test results
+
+      - name: Summary
+        if: always()
+        run: python3 Tools/ci/summarize_results.py "artifacts/${{ matrix.testMode }}/*.xml" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.testMode }}
+          path: artifacts/${{ matrix.testMode }}

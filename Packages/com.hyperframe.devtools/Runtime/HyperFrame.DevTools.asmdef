@@ -1,0 +1,14 @@
+{
+  "name": "HyperFrame.DevTools",
+  "rootNamespace": "HyperFrame.DevTools",
+  "references": [ "HyperFrame.Core", "HyperFrame.Services", "HyperFrame.UI", "HyperFrame.App" ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [ "UNITY_EDITOR || DEVELOPMENT_BUILD || HF_CHEATS" ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

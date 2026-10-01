@@ -1,0 +1,211 @@
+using System.Collections;
+using HyperFrame.App;
+using HyperFrame.App.Testing;
+using HyperFrame.Core;
+using HyperFrame.Input;
+using HyperFrame.Services;
+using HyperFrame.UI;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
+
+namespace Game.Tests
+{
+    /// <summary>
+    /// Phase 0 exit criterion: the dummy game runs Boot → Home → Play → Win → Home, driven like a player
+    /// (UI buttons pressed by name, world taps injected through the input service).
+    /// </summary>
+    public class FullFlowTests
+    {
+        GameDefinition _definition;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _definition = Resources.Load<GameDefinition>(HyperFrameApp.DefinitionResourcePath);
+            Assert.IsNotNull(_definition, "Assets/_Game/Resources/GameDefinition.asset is missing");
+        }
+
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            if (HyperFrameApp.Instance != null) Object.Destroy(HyperFrameApp.Instance.gameObject);
+            yield return null;
+        }
+
+        IEnumerator Boot(AppOptions options = null)
+        {
+            HyperFrameApp.Launch(_definition, options ?? AppOptions.ForTests());
+            yield return AppDriver.WaitForReady();
+            Assert.IsFalse(AppDriver.App.BootFailed, AppDriver.App.BootReport?.ToString());
+            yield return AppDriver.WaitForState(GameFlowState.Home);
+            yield return AppDriver.WaitForView<HomeScreen>();
+        }
+
+        /// <summary>Taps every remaining target the way a player would.</summary>
+        static IEnumerator TapAllTargets()
+        {
+            var gameplay = (TapTargetsGameplay)AppDriver.Flow.ActiveGameplay;
+            yield return new WaitForSeconds(0.6f); // pop-in animation
+            int guard = 0;
+            while (gameplay.Remaining.Count > 0 && guard++ < 50)
+            {
+                AppDriver.TapWorld(gameplay.Remaining[0].transform.position);
+                yield return null;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator Boot_Home_Play_Win_Home()
+        {
+            yield return Boot();
+            var progression = ServiceLocator.Get<IProgressionService>();
+            var wallet = ServiceLocator.Get<IWallet>();
+            var analytics = ServiceLocator.Get<InMemoryAnalyticsBackend>();
+            Assert.AreEqual(0, progression.CurrentLevelIndex);
+            long coinsBefore = wallet.Get(Currencies.Coins);
+
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            yield return TapAllTargets();
+
+            yield return AppDriver.WaitForState(GameFlowState.Result);
+            yield return AppDriver.Click<WinPopup>("btn_Continue");
+            yield return AppDriver.WaitForState(GameFlowState.Home, 15f);
+
+            Assert.AreEqual(1, progression.CurrentLevelIndex, "level 1 should be completed");
+            Assert.AreEqual(3, progression.GetStars(0), "no missed taps = 3 stars");
+            Assert.AreEqual(coinsBefore + _definition.winRewardCoins, wallet.Get(Currencies.Coins));
+            Assert.AreEqual(1, analytics.Count(AnalyticsSchema.LevelStart));
+            Assert.AreEqual(1, analytics.Count(AnalyticsSchema.LevelComplete));
+            Assert.IsFalse(ServiceLocator.Get<IInputService>().Lock.IsLocked, "input lock leaked: " + AppDriver.Describe());
+            Assert.IsFalse(ServiceLocator.Get<IGameClock>().IsPaused);
+        }
+
+        [UnityTest]
+        public IEnumerator Lose_Then_Retry_Then_Home()
+        {
+            yield return Boot();
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            yield return new WaitForSeconds(0.6f);
+
+            // Miss on purpose until out of taps.
+            var gameplay = (TapTargetsGameplay)AppDriver.Flow.ActiveGameplay;
+            var emptySpot = new Vector3(0f, 7.5f, 0f); // top edge, outside the play area
+            for (int i = 0; i < gameplay.TapLimit; i++)
+            {
+                AppDriver.TapWorld(emptySpot);
+                yield return null;
+            }
+
+            yield return AppDriver.WaitForState(GameFlowState.Result);
+            yield return AppDriver.Click<LosePopup>("btn_Retry");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            Assert.AreEqual(0, AppDriver.Flow.ActiveGameplay.Moves, "retry starts a fresh attempt");
+
+            AppDriver.Flow.ForceFinish(false);
+            yield return AppDriver.Click<LosePopup>("btn_Home");
+            yield return AppDriver.WaitForState(GameFlowState.Home);
+            Assert.AreEqual(0, ServiceLocator.Get<IProgressionService>().CurrentLevelIndex);
+            Assert.AreEqual(2, ServiceLocator.Get<InMemoryAnalyticsBackend>().Count(AnalyticsSchema.LevelFail));
+        }
+
+        [UnityTest]
+        public IEnumerator Win_WithRewardedMultiplier_GrantsDoubleCoins()
+        {
+            yield return Boot();
+            var wallet = ServiceLocator.Get<IWallet>();
+            long before = wallet.Get(Currencies.Coins);
+
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            AppDriver.Flow.ForceFinish(true);
+            yield return AppDriver.Click<WinPopup>("btn_Multiply");
+            yield return AppDriver.WaitForState(GameFlowState.Home, 15f);
+
+            Assert.AreEqual(before + _definition.winRewardCoins * _definition.rewardedMultiplier, wallet.Get(Currencies.Coins));
+            Assert.AreEqual(1, ServiceLocator.Get<InMemoryAnalyticsBackend>().Count(AnalyticsSchema.AdReward));
+        }
+
+        [UnityTest]
+        public IEnumerator Win_WithSkippedAd_GrantsBaseCoins()
+        {
+            var options = AppOptions.ForTests();
+            options.MockAdResult = AdResult.Skipped;
+            yield return Boot(options);
+            var wallet = ServiceLocator.Get<IWallet>();
+            long before = wallet.Get(Currencies.Coins);
+
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            AppDriver.Flow.ForceFinish(true);
+            yield return AppDriver.Click<WinPopup>("btn_Multiply");
+            yield return AppDriver.WaitForState(GameFlowState.Home, 15f);
+
+            Assert.AreEqual(before + _definition.winRewardCoins, wallet.Get(Currencies.Coins));
+        }
+
+        [UnityTest]
+        public IEnumerator Pause_LocksInput_AndResumeReleasesIt()
+        {
+            yield return Boot();
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            yield return AppDriver.Click<GameplayScreen>("btn_Pause");
+            yield return AppDriver.WaitForView<PausePopup>();
+
+            Assert.IsTrue(ServiceLocator.Get<IGameClock>().IsPaused);
+            Assert.IsTrue(ServiceLocator.Get<IInputService>().Lock.IsLocked);
+
+            // A tap while paused must not count.
+            var gameplay = (TapTargetsGameplay)AppDriver.Flow.ActiveGameplay;
+            AppDriver.TapWorld(gameplay.Remaining[0].transform.position);
+            Assert.AreEqual(0, gameplay.Moves);
+
+            yield return AppDriver.Click<PausePopup>("btn_Resume");
+            yield return AppDriver.WaitUntil(() => !ServiceLocator.Get<IInputService>().Lock.IsLocked, 5f, "input unlock");
+            Assert.IsFalse(ServiceLocator.Get<IGameClock>().IsPaused);
+        }
+
+        [UnityTest]
+        public IEnumerator BackButton_InGameplay_OpensPause_ThenResumes()
+        {
+            yield return Boot();
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            yield return AppDriver.WaitForView<GameplayScreen>();
+
+            ServiceLocator.Get<IInputService>().InjectBack();
+            yield return AppDriver.WaitForView<PausePopup>();
+            ServiceLocator.Get<IInputService>().InjectBack();
+            yield return AppDriver.WaitUntil(() => !ServiceLocator.Get<IGameClock>().IsPaused, 5f, "resume after back");
+            Assert.AreEqual(GameFlowState.Gameplay, AppDriver.Flow.State);
+        }
+
+        [UnityTest]
+        public IEnumerator Progress_SurvivesReboot()
+        {
+            var storage = new InMemorySaveStorage(); // shared by both boots, like the device disk
+            var options = AppOptions.ForTests();
+            options.SaveStorage = storage;
+
+            yield return Boot(options);
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            AppDriver.Flow.ForceFinish(true);
+            yield return AppDriver.Click<WinPopup>("btn_Continue");
+            yield return AppDriver.WaitForState(GameFlowState.Home, 15f);
+            long coins = ServiceLocator.Get<IWallet>().Get(Currencies.Coins);
+
+            Object.Destroy(HyperFrameApp.Instance.gameObject); // OnDestroy saves
+            yield return null;
+            Assert.IsTrue(storage.Files.ContainsKey("save"), "app did not save on shutdown");
+
+            yield return Boot(options);
+            Assert.AreEqual(1, ServiceLocator.Get<IProgressionService>().CurrentLevelIndex);
+            Assert.AreEqual(coins, ServiceLocator.Get<IWallet>().Get(Currencies.Coins));
+            Assert.AreEqual("Level 2", ServiceLocator.Get<IUIService>().GetView<HomeScreen>().GetText("txt_Level"));
+        }
+    }
+}

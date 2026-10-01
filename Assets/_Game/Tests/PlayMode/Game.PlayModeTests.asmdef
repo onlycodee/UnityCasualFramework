@@ -1,0 +1,17 @@
+{
+  "name": "Game.PlayModeTests",
+  "rootNamespace": "Game.Tests",
+  "references": [
+    "Game", "HyperFrame.Core", "HyperFrame.Input", "HyperFrame.UI", "HyperFrame.Audio",
+    "HyperFrame.Services", "HyperFrame.Feedback", "HyperFrame.App", "UnityEngine.TestRunner", "UnityEditor.TestRunner"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [ "nunit.framework.dll" ],
+  "autoReferenced": false,
+  "defineConstraints": [ "UNITY_INCLUDE_TESTS" ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

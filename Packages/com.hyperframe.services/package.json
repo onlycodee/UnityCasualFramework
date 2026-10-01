@@ -1,0 +1,11 @@
+{
+  "name": "com.hyperframe.services",
+  "version": "0.1.0",
+  "displayName": "HyperFrame Services",
+  "description": "Service interfaces with mock implementations: save (JSON + migrations), settings, wallet, progression, level loading/validation, analytics schema + dispatcher, ads, IAP, consent, remote config.",
+  "unity": "6000.3",
+  "dependencies": {
+    "com.hyperframe.core": "0.1.0",
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  }
+}

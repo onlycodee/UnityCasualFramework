@@ -1,0 +1,14 @@
+{
+  "name": "HyperFrame.Services.Tests",
+  "rootNamespace": "HyperFrame.Services.Tests",
+  "references": [ "HyperFrame.Core", "HyperFrame.Services", "UnityEngine.TestRunner", "UnityEditor.TestRunner" ],
+  "includePlatforms": [ "Editor" ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [ "nunit.framework.dll", "Newtonsoft.Json.dll" ],
+  "autoReferenced": false,
+  "defineConstraints": [ "UNITY_INCLUDE_TESTS" ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
