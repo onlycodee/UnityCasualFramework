@@ -23,4 +23,5 @@ Assets/_Game                      L4  Tap Targets (the only game code)
 ```
 
 Quick check without Unity: `python3 Tools/ci/check_architecture.py`.
-With Unity (Editor closed): `Tools/ci/run-tests.sh all`.
+With Unity (Editor closed): `Tools/ci/run-tests.sh all` on macOS/Linux, or on Windows
+`powershell -ExecutionPolicy Bypass -File Tools\ci\run-tests.ps1 all`.

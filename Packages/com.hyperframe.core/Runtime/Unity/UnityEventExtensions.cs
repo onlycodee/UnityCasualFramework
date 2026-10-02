@@ -11,7 +11,7 @@ namespace HyperFrame.Core
         /// </summary>
         public static void SubscribeUntilDestroy<T>(this Component owner, IEventBus bus, Action<T> handler) where T : struct
         {
-            var holder = owner.GetComponent<EventSubscriptionHolder>() ?? owner.gameObject.AddComponent<EventSubscriptionHolder>();
+            var holder = owner.GetOrAddComponent<EventSubscriptionHolder>();
             holder.Subscriptions.Add(bus.Subscribe(handler));
         }
 

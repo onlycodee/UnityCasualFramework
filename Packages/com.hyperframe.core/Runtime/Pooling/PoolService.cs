@@ -55,7 +55,7 @@ namespace HyperFrame.Core
                 createFunc: () =>
                 {
                     var go = Object.Instantiate(prefab, _root);
-                    var marker = go.GetComponent<PooledObject>() ?? go.AddComponent<PooledObject>();
+                    var marker = go.GetOrAddComponent<PooledObject>();
                     marker.Prefab = prefab;
                     return go;
                 },
