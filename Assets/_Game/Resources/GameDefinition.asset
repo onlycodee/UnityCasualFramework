@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5702f6a3a9c34e62b8fc8954ad7c44ee, type: 3}
+  m_Name: GameDefinition
+  m_EditorClassIdentifier: 
+  gameId: tap_targets
+  gameTitle: Tap Targets
+  kits: []
+  gameplay: {fileID: 11400000, guid: 22387e65da994123a3055b169db4594a, type: 2}
+  levels: {fileID: 0}
+  theme: {fileID: 0}
+  views: {fileID: 0}
+  sounds: {fileID: 0}
+  gestures: {fileID: 0}
+  startingCoins: 0
+  winRewardCoins: 25
+  rewardedMultiplier: 2
+  showLevelSelect: 1
+  continueToNextLevel: 0
+  saveSchemaVersion: 1
+  privacyPolicyUrl: 
+  autoBootInAnyScene: 0

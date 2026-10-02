@@ -1,0 +1,14 @@
+{
+  "name": "HyperFrame.Audio.Tests",
+  "rootNamespace": "HyperFrame.Audio.Tests",
+  "references": [ "HyperFrame.Core", "HyperFrame.Audio", "UnityEngine.TestRunner", "UnityEditor.TestRunner" ],
+  "includePlatforms": [ "Editor" ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [ "nunit.framework.dll" ],
+  "autoReferenced": false,
+  "defineConstraints": [ "UNITY_INCLUDE_TESTS" ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

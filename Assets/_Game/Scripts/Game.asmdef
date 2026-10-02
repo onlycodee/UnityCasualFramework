@@ -1,0 +1,17 @@
+{
+  "name": "Game",
+  "rootNamespace": "Game",
+  "references": [
+    "HyperFrame.Core", "HyperFrame.Input", "HyperFrame.UI", "HyperFrame.Audio",
+    "HyperFrame.Services", "HyperFrame.Feedback", "HyperFrame.App"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

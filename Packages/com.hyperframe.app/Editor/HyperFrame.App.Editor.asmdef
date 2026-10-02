@@ -1,0 +1,14 @@
+{
+  "name": "HyperFrame.App.Editor",
+  "rootNamespace": "HyperFrame.App.Editor",
+  "references": [ "HyperFrame.Core", "HyperFrame.Services", "HyperFrame.UI", "HyperFrame.Audio", "HyperFrame.App" ],
+  "includePlatforms": [ "Editor" ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

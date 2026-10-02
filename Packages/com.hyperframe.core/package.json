@@ -1,0 +1,9 @@
+{
+  "name": "com.hyperframe.core",
+  "version": "0.1.0",
+  "displayName": "HyperFrame Core",
+  "description": "L1 core of HyperFrame: boot sequence, service locator, typed event bus, state machine, pooling, pause-aware tweens/timers, logger.",
+  "unity": "6000.3",
+  "author": { "name": "HyperFrame" },
+  "dependencies": {}
+}

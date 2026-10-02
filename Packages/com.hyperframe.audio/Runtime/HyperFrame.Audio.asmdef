@@ -1,0 +1,14 @@
+{
+  "name": "HyperFrame.Audio",
+  "rootNamespace": "HyperFrame.Audio",
+  "references": [ "HyperFrame.Core" ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

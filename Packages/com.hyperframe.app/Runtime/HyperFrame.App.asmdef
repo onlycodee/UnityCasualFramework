@@ -1,0 +1,17 @@
+{
+  "name": "HyperFrame.App",
+  "rootNamespace": "HyperFrame.App",
+  "references": [
+    "HyperFrame.Core", "HyperFrame.Input", "HyperFrame.UI", "HyperFrame.Audio",
+    "HyperFrame.Services", "HyperFrame.Feedback", "UnityEngine.UI"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
