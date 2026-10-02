@@ -40,9 +40,7 @@ namespace Game.Tests
             Run(sim, maxSeconds, s =>
             {
                 if (s.BeltLoad > 0) return;
-                Shooter next = null;
-                foreach (var sh in s.Shooters)
-                    if ((sh.State == ShooterState.Queued || sh.State == ShooterState.Tray) && (next == null || sh.Id < next.Id)) next = sh;
+                var next = BeltBot.NextPlanned(s);
                 if (next != null) s.TryLaunch(next);
             });
         }

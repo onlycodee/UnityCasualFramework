@@ -28,6 +28,30 @@ sounds and levels. All game code is in `Assets/_Game`; the framework only gained
 | `Resources/PixelLoopModule.asset` | Level list (play order), loop point, stage colours |
 | `Levels/*.json` | 21 levels |
 
+## 3D version (Pixel Loop 3D)
+Same rules, levels and sounds, presented in 3D: a voxel picture that rains onto a lit board, a conveyor rail
+with moving treads, toy turrets with eyes and floating ammo badges, real-time shadows, a perspective camera
+that flies in, breathes and shakes, bouncing voxel debris, flashes, sparks and shockwave rings, and a win
+"rebuild" wave. Everything is generated in code (meshes in `Mesh3D`) plus two small Built-in-pipeline shaders.
+
+**Switching between 2D and 3D:** set `gameplay` on `Resources/GameDefinition.asset` to `PixelLoop3DModule`
+(the default now) or `PixelLoopModule`. Both read the same level list from `PixelLoopModuleBase`.
+
+| File | What |
+|---|---|
+| `Scripts/Gameplay3D/PixelLoop3DGameplay.cs` | 3D stage, tap → ray against the stage plane, sim events → feel |
+| `Scripts/Gameplay3D/Stage3DLayout.cs` | Where the tray and queue sit, and what a tap hits (engine-free, tested) |
+| `Scripts/Gameplay3D/ShooterView3D.cs` | The toy turret and its blended movement |
+| `Scripts/Gameplay3D/CameraRig3D.cs` | Fits the stage on any aspect ratio under the HUD; intro, idle sway, trauma shake, win push-in |
+| `Scripts/Gameplay3D/Fx3D.cs` | Pooled debris / flash / spark / ring effects on game time (pause and slow-mo apply) |
+| `Scripts/Gameplay3D/Mesh3D.cs`, `Look3D.cs`, `Environment3D.cs` | Procedural meshes, materials, ambient/fog/shadow settings (restored after the level) |
+| `Art/Shaders/PixelLoopToy.shader`, `PixelLoopUnlit.shader` | Glossy toy plastic with rim light; unlit glow/trail/badge |
+| `Resources/PixelLoop3DModule.asset` | Level list, shader references, `style` (colours, light, camera pitch/FOV, HUD margin) |
+
+The project uses the Built-in render pipeline and has no 3D physics module, so taps are resolved with a
+ray–plane intersection and `Stage3DLayout.HitTest`, not colliders. The framework restores the camera
+(`CameraSnapshot`) when a level is left, so the 3D rig never leaks into Home.
+
 ## Adding a level
 1. Add `Assets/_Game/Levels/NNN_name.json`:
    ```json

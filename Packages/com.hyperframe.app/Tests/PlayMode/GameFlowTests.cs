@@ -77,6 +77,25 @@ namespace HyperFrame.App.Tests
         }
 
         [UnityTest]
+        public IEnumerator CameraChangedByGameplay_IsRestoredAtHome()
+        {
+            var cam = Camera.main;
+            var before = CameraSnapshot.Capture(cam);
+            _module.UsePerspectiveCamera = true;
+            yield return AppDriver.Click<HomeScreen>("btn_Play");
+            yield return AppDriver.WaitForState(GameFlowState.Gameplay);
+            Assert.IsFalse(cam.orthographic, "the fake gameplay switches to perspective");
+
+            yield return AppDriver.Click<GameplayScreen>("btn_Pause");
+            yield return AppDriver.Click<PausePopup>("btn_Home");
+            yield return AppDriver.WaitForState(GameFlowState.Home);
+            Assert.IsTrue(cam.orthographic);
+            Assert.AreEqual(before.OrthographicSize, cam.orthographicSize);
+            Assert.AreEqual(before.Position, cam.transform.localPosition);
+            Assert.AreEqual(before.Rotation, cam.transform.localRotation);
+        }
+
+        [UnityTest]
         public IEnumerator Settings_TogglesPersistToSave()
         {
             yield return AppDriver.Click<HomeScreen>("btn_Settings");

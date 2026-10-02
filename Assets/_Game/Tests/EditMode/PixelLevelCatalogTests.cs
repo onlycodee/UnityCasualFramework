@@ -78,6 +78,22 @@ namespace Game.Tests
             var listed = module.levels.Select(t => t != null ? t.name + ".json" : "<missing>").ToList();
             CollectionAssert.AreEqual(LevelFileNames().ToList(), listed);
         }
+
+        [Test]
+        public void Module3D_PlaysTheSameLevels_AndShipsItsShaders()
+        {
+            var flat = UnityEngine.Resources.Load<PixelLoopModule>("PixelLoopModule");
+            var voxel = UnityEngine.Resources.Load<PixelLoop3DModule>("PixelLoop3DModule");
+            Assert.IsNotNull(voxel, "Assets/_Game/Resources/PixelLoop3DModule.asset is missing");
+            CollectionAssert.AreEqual(flat.levels, voxel.levels);
+            Assert.AreEqual(flat.loopFromIndex, voxel.loopFromIndex);
+            Assert.IsNotNull(voxel.toyShader, "PixelLoop/Toy shader not assigned");
+            Assert.IsNotNull(voxel.unlitShader, "PixelLoop/Unlit shader not assigned");
+            Assert.AreEqual("PixelLoop/Toy", voxel.toyShader.name);
+            Assert.AreEqual("PixelLoop/Unlit", voxel.unlitShader.name);
+            Assert.IsTrue(voxel.toyShader.isSupported, "PixelLoop/Toy does not compile on this platform");
+            Assert.IsTrue(voxel.unlitShader.isSupported, "PixelLoop/Unlit does not compile on this platform");
+        }
 #endif
     }
 }

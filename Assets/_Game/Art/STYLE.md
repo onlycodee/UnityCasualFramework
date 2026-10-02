@@ -14,3 +14,10 @@ Every image prompt for this game must include the **Style prompt** below.
 - **Camera**: orthographic, front view.
 - Every sprite in the current build is generated in code (`PixelLoopArt`); replacing one with a drawn asset
   needs an `ASSET_LICENSES.md` entry.
+
+## 3D version
+- **Pieces**: glossy toy plastic (`PixelLoop/Toy`: smoothness ~0.6, soft rim light), rounded-edge voxels,
+  turrets with a belly band, barrel and two eyes; dark disc badges with white ammo numbers.
+- **Light**: warm key light from the upper left behind the camera with soft shadows, violet trilight ambient,
+  fog fading the ground into the #1A1436 background.
+- **Camera**: perspective, 56° pitch, 34° FOV, framed to fit under the HUD.

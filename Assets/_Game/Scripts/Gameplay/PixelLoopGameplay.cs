@@ -13,11 +13,8 @@ namespace Game
     /// Rules live in <see cref="BeltSim"/>; this class builds the 2D stage under Context.WorldRoot, feeds
     /// taps to the sim and turns its events into animation, particles, sound and haptics.
     /// </summary>
-    public sealed class PixelLoopGameplay : GameplayBase
+    public sealed class PixelLoopGameplay : GameplayBase, IPixelLoopGameplay
     {
-        /// <summary>Debug console toggles (Game/…). The bot plays the best available shooter.</summary>
-        public static bool AutoPlay;
-        public static float SpeedBoost = 1f;
 
         // Stage layout, in stage units (the stage is scaled down on narrow screens).
         const float StageY = 1.2f;
@@ -268,16 +265,6 @@ namespace Game
             return _stage.TransformPoint(QueuePosition(s.Column, 0));
         }
 
-        /// <summary>Next shooter of the planned order still waiting to be sent (queue or tray).</summary>
-        public Shooter NextPlanned()
-        {
-            Shooter best = null;
-            foreach (var s in _sim.Shooters)
-                if ((s.State == ShooterState.Queued || s.State == ShooterState.Tray) && (best == null || s.Id < best.Id))
-                    best = s;
-            return best;
-        }
-
         // ── Frame ───────────────────────────────────────────────────────────────────────
 
         void Tick(float dt)
@@ -285,11 +272,11 @@ namespace Game
             _time += dt;
             if (!IsFinished && !_ending)
             {
-                _sim.Step(dt * SpeedBoost);
-                if (AutoPlay) RunAutoPlay(dt);
+                _sim.Step(dt * PixelLoopDebug.SpeedBoost);
+                if (PixelLoopDebug.AutoPlay) RunAutoPlay(dt);
             }
 
-            _treadOffset = (_treadOffset + _sim.Speed * SpeedBoost * dt) % _treadGap;
+            _treadOffset = (_treadOffset + _sim.Speed * PixelLoopDebug.SpeedBoost * dt) % _treadGap;
             PlaceTreads();
             foreach (var view in _views.Values) UpdateView(view, dt);
             UpdateTrayAndLights();
@@ -579,18 +566,7 @@ namespace Game
             _autoTimer -= dt;
             if (_autoTimer > 0f || _sim.BeltFull) return;
             _autoTimer = 0.35f;
-            var cells = _sim.SnapshotCells();
-            Shooter best = null;
-            int bestHits = 0;
-            void Consider(Shooter s)
-            {
-                if (s == null || !_sim.CanLaunch(s)) return;
-                foreach (var b in _sim.Belt) if (b.Color == s.Color) return; // let the one on the belt work first
-                int hits = BeltSim.LoopHits(cells, _geo, s.Color, s.Ammo, apply: false);
-                if (hits > bestHits) { best = s; bestHits = hits; }
-            }
-            foreach (var s in _sim.Tray) Consider(s);
-            for (int c = 0; c < _sim.Columns.Count; c++) Consider(_sim.Front(c));
+            var best = BeltBot.Choose(_sim);
             if (best != null) _sim.TryLaunch(best);
         }
 
