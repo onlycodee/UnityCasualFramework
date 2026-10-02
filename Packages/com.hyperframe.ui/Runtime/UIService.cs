@@ -207,7 +207,7 @@ namespace HyperFrame.UI
             dimmer.gameObject.SetActive(show);
             if (show)
             {
-                var group = dimmer.GetComponent<CanvasGroup>() ?? dimmer.gameObject.AddComponent<CanvasGroup>();
+                var group = dimmer.GetOrAddComponent<CanvasGroup>();
                 group.alpha = 0f;
                 _tweens.To(0f, 1f, 0.15f, a => group.alpha = a, Ease.Linear, TimeMode.Unscaled).SetTarget(dimmer);
             }

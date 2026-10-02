@@ -38,7 +38,7 @@ namespace HyperFrame.UI
         {
             UI = ui;
             _tweens = tweens;
-            _group = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+            _group = this.GetOrAddComponent<CanvasGroup>();
             Stretch(Rect);
             if (transform.childCount == 0) BuildPlaceholder(new UIBuilder(ui.Theme));
             IndexChildren();
