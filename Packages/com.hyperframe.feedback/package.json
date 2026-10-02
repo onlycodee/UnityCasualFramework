@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "displayName": "HyperFrame Feedback",
   "description": "One-line game-feel presets: shake, squash/stretch, punch, particle burst, confetti, coin fly-to-wallet, slow-mo, and haptics presets.",
-  "unity": "6000.3",
+  "unity": "6000.4",
   "dependencies": {
     "com.hyperframe.core": "0.1.0",
     "com.hyperframe.ui": "0.1.0",

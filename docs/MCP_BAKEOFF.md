@@ -2,7 +2,7 @@
 
 Status: **not run yet** (needs a machine with the Unity Editor). MCP for Unity is the provisional default.
 
-Score each candidate 0–2 per criterion (0 = no, 1 = partial/flaky, 2 = solid) on Unity 6000.3.25f1 with this repo.
+Score each candidate 0–2 per criterion (0 = no, 1 = partial/flaky, 2 = solid) on Unity 6000.4.11f1 with this repo.
 
 | # | Criterion | How to test | MCP for Unity (CoplayDev) | Unity official MCP (Unity AI) | Unity-MCP (IvanMurzak) | mcp-unity (CoderGamester) |
 |---|---|---|---|---|---|---|

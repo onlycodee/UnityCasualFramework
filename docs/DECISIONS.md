@@ -4,7 +4,7 @@ Defaults picked so work could start; each can be revisited. "Open question" numb
 
 | # | Topic | Decision | Why / how to change |
 |---|---|---|---|
-| — | Unity version | **6000.3.25f1 (Unity 6.3 LTS)**, newest LTS as of 2026-10 | PRD requires LTS. 6000.6.x is newer but not LTS. Change `ProjectSettings/ProjectVersion.txt` and `"unity"` in package.json files. |
+| — | Unity version | **6000.4.11f1 (Unity 6.4)**, upgraded from 6000.3.25f1 (6.3 LTS) on 2026-10-02 at Phuong's request | Phuong chose 6.4 over the PRD's LTS preference. 6.4 deprecates `Object.GetInstanceID()` (use `GetEntityId()`); nothing else the framework uses changed. To change again: `ProjectSettings/ProjectVersion.txt` and `"unity"` in package.json files. |
 | 1 | Unity MCP server | **MCP for Unity (CoplayDev) v10.0.0**, HTTP on `localhost:8080/mcp` | Most complete tool set (compile, console, tests, play mode, screenshots). Provisional until the bake-off in `docs/MCP_BAKEOFF.md`. Framework code does not depend on it; `/verify` has a batchmode fallback. |
 | 3 | Tweening | **Built-in `TweenEngine`** in core (no DOTween/LitMotion) | Needed pause-aware, allocation-free tick, unit-testable without Unity. LitMotion can be added later for heavy animation without changing the core API. |
 | — | Async | **`System.Threading.Tasks`** + `.Forget()` | Zero dependencies and testable under plain .NET. UniTask can replace it in a later phase. Note: `Task.Delay` does not work in WebGL; revisit before the playable-ad export (P2). |
