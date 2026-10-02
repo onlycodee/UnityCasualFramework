@@ -1,7 +1,7 @@
 {
   "name": "HyperFrame.DevTools",
   "rootNamespace": "HyperFrame.DevTools",
-  "references": [ "HyperFrame.Core", "HyperFrame.Services", "HyperFrame.UI", "HyperFrame.App" ],
+  "references": [ "HyperFrame.Core", "HyperFrame.Services", "HyperFrame.UI", "HyperFrame.App", "Unity.InputSystem" ],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
