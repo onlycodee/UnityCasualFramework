@@ -1,9 +1,16 @@
-# Art Bible — Tap Targets (AI-10)
+# Art Bible — Pixel Loop (AI-10)
 
 Every image prompt for this game must include the **Style prompt** below.
 
-- **Palette**: #F25C5C, #5CBFF2, #FACC40, #73D973, #BF80F2 on a dark navy background (#262B40).
-- **Style prompt**: "flat 2D vector game asset, soft rounded shapes, thick clean outline, subtle top-left highlight, no text, centered, transparent background"
+- **Mood**: glossy toy-like pieces on a deep violet night background; the picture board is a light card so
+  the pixel art pops.
+- **Background**: vertical gradient #382F6B → #171433 with faint drifting bokeh.
+- **Board**: #F5F2FC card on a #2B2649 conveyor track, soft drop shadow.
+- **Pixels**: rounded squares with a top-left bevel highlight; colours come from each level's palette.
+- **Shooters**: glossy balls in the shooter colour, darker outline and barrel, bold white ammo number
+  (dark ink on light colours).
+- **Style prompt**: "glossy 2D casual game asset, soft rounded shapes, subtle top-left highlight, gentle
+  bevel, no text, centered, transparent background"
 - **Camera**: orthographic, front view.
-- **Outline**: 6 px at 512 px, darker shade of the fill.
-- **References**: (add images to `Assets/_Game/Art/References/`).
+- Every sprite in the current build is generated in code (`PixelLoopArt`); replacing one with a drawn asset
+  needs an `ASSET_LICENSES.md` entry.

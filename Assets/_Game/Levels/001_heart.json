@@ -1,0 +1,25 @@
+{
+  "id": "pl_001",
+  "name": "Heart",
+  "colors": [
+    "#EF476F",
+    "#FFB4C6"
+  ],
+  "rows": [
+    ".000.000.",
+    "001100000",
+    "011000000",
+    "000000000",
+    ".0000000.",
+    "..00000..",
+    "...000...",
+    "....0...."
+  ],
+  "queueColumns": 2,
+  "beltCapacity": 3,
+  "traySlots": 5,
+  "maxAmmo": 20,
+  "loopSeconds": 4.0,
+  "seed": 101,
+  "shooters": []
+}

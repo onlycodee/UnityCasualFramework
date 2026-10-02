@@ -12,8 +12,8 @@ using UnityEngine.TestTools;
 namespace Game.Tests
 {
     /// <summary>
-    /// Phase 0 exit criterion: the dummy game runs Boot → Home → Play → Win → Home, driven like a player
-    /// (UI buttons pressed by name, world taps injected through the input service).
+    /// The game runs Boot → Home → Play → Win → Home, driven like a player (UI buttons pressed by name,
+    /// world taps injected through the input service).
     /// </summary>
     public class FullFlowTests
     {
@@ -42,17 +42,32 @@ namespace Game.Tests
             yield return AppDriver.WaitForView<HomeScreen>();
         }
 
-        /// <summary>Taps every remaining target the way a player would.</summary>
-        static IEnumerator TapAllTargets()
+        /// <summary>
+        /// Plays the level like a careful player: taps the queue column (or tray slot) of the next planned
+        /// shooter whenever the belt is empty, through real input injection.
+        /// </summary>
+        static IEnumerator PlayLevel()
         {
-            var gameplay = (TapTargetsGameplay)AppDriver.Flow.ActiveGameplay;
-            yield return new WaitForSeconds(0.6f); // pop-in animation
-            int guard = 0;
-            while (gameplay.Remaining.Count > 0 && guard++ < 50)
+            var gameplay = (PixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
+            yield return new WaitForSeconds(0.8f); // pixels and shooters fly in
+            ServiceLocator.Get<IGameClock>().TimeScale = 3f; // keep the test short
+            var sim = gameplay.Sim;
+            float end = Time.realtimeSinceStartup + 120f;
+            while (!sim.IsOver && Time.realtimeSinceStartup < end)
             {
-                AppDriver.TapWorld(gameplay.Remaining[0].transform.position);
+                if (sim.BeltLoad == 0)
+                {
+                    var next = gameplay.NextPlanned();
+                    if (next != null)
+                    {
+                        int launches = sim.Launches;
+                        AppDriver.TapWorld(gameplay.TapPointFor(next));
+                        yield return AppDriver.WaitUntil(() => sim.Launches > launches, 5f, $"shooter {next.Id} to launch");
+                    }
+                }
                 yield return null;
             }
+            Assert.IsTrue(sim.IsWon, $"level not cleared: {sim.Remaining} pixels left, lost={sim.IsLost}. {AppDriver.Describe()}");
         }
 
         [UnityTest]
@@ -67,14 +82,14 @@ namespace Game.Tests
 
             yield return AppDriver.Click<HomeScreen>("btn_Play");
             yield return AppDriver.WaitForState(GameFlowState.Gameplay);
-            yield return TapAllTargets();
+            yield return PlayLevel();
 
             yield return AppDriver.WaitForState(GameFlowState.Result);
             yield return AppDriver.Click<WinPopup>("btn_Continue");
             yield return AppDriver.WaitForState(GameFlowState.Home, 15f);
 
             Assert.AreEqual(1, progression.CurrentLevelIndex, "level 1 should be completed");
-            Assert.AreEqual(3, progression.GetStars(0), "no missed taps = 3 stars");
+            Assert.AreEqual(3, progression.GetStars(0), "no shooter came back = 3 stars");
             Assert.AreEqual(coinsBefore + _definition.winRewardCoins, wallet.Get(Currencies.Coins));
             Assert.AreEqual(1, analytics.Count(AnalyticsSchema.LevelStart));
             Assert.AreEqual(1, analytics.Count(AnalyticsSchema.LevelComplete));
@@ -88,16 +103,12 @@ namespace Game.Tests
             yield return Boot();
             yield return AppDriver.Click<HomeScreen>("btn_Play");
             yield return AppDriver.WaitForState(GameFlowState.Gameplay);
-            yield return new WaitForSeconds(0.6f);
-
-            // Miss on purpose until out of taps.
-            var gameplay = (TapTargetsGameplay)AppDriver.Flow.ActiveGameplay;
-            var emptySpot = new Vector3(0f, 7.5f, 0f); // top edge, outside the play area
-            for (int i = 0; i < gameplay.TapLimit; i++)
-            {
-                AppDriver.TapWorld(emptySpot);
-                yield return null;
-            }
+            yield return new WaitForSeconds(0.8f);
+            var gameplay = (PixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
+            AppDriver.TapWorld(gameplay.TapPointFor(gameplay.Sim.Front(0)));
+            yield return null;
+            Assert.AreEqual(1, gameplay.Moves, "a tap on a queue column sends its front shooter");
+            AppDriver.Flow.ForceFinish(false);
 
             yield return AppDriver.WaitForState(GameFlowState.Result);
             yield return AppDriver.Click<LosePopup>("btn_Retry");
@@ -158,10 +169,11 @@ namespace Game.Tests
             Assert.IsTrue(ServiceLocator.Get<IGameClock>().IsPaused);
             Assert.IsTrue(ServiceLocator.Get<IInputService>().Lock.IsLocked);
 
-            // A tap while paused must not count.
-            var gameplay = (TapTargetsGameplay)AppDriver.Flow.ActiveGameplay;
-            AppDriver.TapWorld(gameplay.Remaining[0].transform.position);
+            // A tap while paused must not send a shooter.
+            var gameplay = (PixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
+            AppDriver.TapWorld(gameplay.TapPointFor(gameplay.Sim.Front(0)));
             Assert.AreEqual(0, gameplay.Moves);
+            Assert.AreEqual(0, gameplay.Sim.Launches);
 
             yield return AppDriver.Click<PausePopup>("btn_Resume");
             yield return AppDriver.WaitUntil(() => !ServiceLocator.Get<IInputService>().Lock.IsLocked, 5f, "input unlock");
