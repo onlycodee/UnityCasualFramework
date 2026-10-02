@@ -1,6 +1,6 @@
 # HyperFrame — AI-first Unity framework for 2D hypercasual games
 
-Unity **6000.3.25f1 (6.3 LTS)** · Android / iOS · built to be driven by Claude Code + Unity MCP.
+Unity **6000.4.11f1 (6.4)** · Android / iOS · built to be driven by Claude Code + Unity MCP.
 
 HyperFrame provides the 70–80% of a hypercasual game that is not gameplay (boot, flow, screens, popups,
 input, audio, save, economy, progression, analytics/ads mocks, debug console), so a new game only writes a

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "displayName": "HyperFrame App",
   "description": "App shell: GameDefinition, bootstrap, standard game flow (Boot → Consent → Loading → Home → Gameplay → Result → Reward → Home), standard screens and popups, and the gameplay plug-in point.",
-  "unity": "6000.3",
+  "unity": "6000.4",
   "dependencies": {
     "com.hyperframe.core": "0.1.0",
     "com.hyperframe.input": "0.1.0",

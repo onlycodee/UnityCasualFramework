@@ -1,7 +1,7 @@
 # Setup
 
 ## 1. Open the project
-1. Install **Unity 6000.3.25f1** (Unity 6.3 LTS) with Android and/or iOS build support via Unity Hub.
+1. Install **Unity 6000.4.11f1** (Unity 6.4) with Android and/or iOS build support via Unity Hub.
 2. Clone with LFS: `git lfs install && git clone <repo>`.
 3. Open the folder in Unity Hub. First import resolves packages (Input System, uGUI, Newtonsoft, MCP for Unity).
 4. If Unity asks to enable the new Input System backend, choose **Yes** (restart). Then in

@@ -1,4 +1,4 @@
-# HyperFrame (Unity 6.3 LTS) — agent guide
+# HyperFrame (Unity 6.4) — agent guide
 
 HyperFrame is a modular Unity framework for 2D hypercasual games. This repository holds the framework
 packages (`Packages/com.hyperframe.*`) and a dummy game (`Assets/_Game`, "Tap Targets") that proves the

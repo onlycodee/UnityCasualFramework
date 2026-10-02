@@ -52,7 +52,7 @@ namespace HyperFrame.Feedback
             if (target == null) return;
             _tweens.KillTarget(target, complete: true);
             var origin = target.localPosition;
-            var rng = new System.Random(target.GetInstanceID());
+            var rng = new System.Random(target.GetEntityId().GetHashCode());
             _tweens.To(1f, 0f, duration, k =>
             {
                 if (target == null) return;
