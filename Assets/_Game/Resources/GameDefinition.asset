@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: GameDefinition
   m_EditorClassIdentifier: 
   gameId: pixel_loop
-  gameTitle: Pixel Loop
+  gameTitle: Pixel Loop 3D
   kits: []
-  gameplay: {fileID: 11400000, guid: d9dd7353a3d09ce4cc36cb0ea4d8ff20, type: 2}
+  gameplay: {fileID: 11400000, guid: aea4f5b78a5f4ece93b941407ba42d78, type: 2}
   levels: {fileID: 0}
   theme: {fileID: 0}
   views: {fileID: 0}

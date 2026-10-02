@@ -33,9 +33,11 @@ namespace Game.Tests
             yield return null;
         }
 
-        IEnumerator Boot(AppOptions options = null)
+        IEnumerator Boot(AppOptions options = null) => Boot(_definition, options);
+
+        internal static IEnumerator Boot(GameDefinition definition, AppOptions options = null)
         {
-            HyperFrameApp.Launch(_definition, options ?? AppOptions.ForTests());
+            HyperFrameApp.Launch(definition, options ?? AppOptions.ForTests());
             yield return AppDriver.WaitForReady();
             Assert.IsFalse(AppDriver.App.BootFailed, AppDriver.App.BootReport?.ToString());
             yield return AppDriver.WaitForState(GameFlowState.Home);
@@ -46,9 +48,9 @@ namespace Game.Tests
         /// Plays the level like a careful player: taps the queue column (or tray slot) of the next planned
         /// shooter whenever the belt is empty, through real input injection.
         /// </summary>
-        static IEnumerator PlayLevel()
+        internal static IEnumerator PlayLevel()
         {
-            var gameplay = (PixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
+            var gameplay = (IPixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
             yield return new WaitForSeconds(0.8f); // pixels and shooters fly in
             ServiceLocator.Get<IGameClock>().TimeScale = 3f; // keep the test short
             var sim = gameplay.Sim;
@@ -57,7 +59,7 @@ namespace Game.Tests
             {
                 if (sim.BeltLoad == 0)
                 {
-                    var next = gameplay.NextPlanned();
+                    var next = BeltBot.NextPlanned(sim);
                     if (next != null)
                     {
                         int launches = sim.Launches;
@@ -104,7 +106,7 @@ namespace Game.Tests
             yield return AppDriver.Click<HomeScreen>("btn_Play");
             yield return AppDriver.WaitForState(GameFlowState.Gameplay);
             yield return new WaitForSeconds(0.8f);
-            var gameplay = (PixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
+            var gameplay = (IPixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
             AppDriver.TapWorld(gameplay.TapPointFor(gameplay.Sim.Front(0)));
             yield return null;
             Assert.AreEqual(1, gameplay.Moves, "a tap on a queue column sends its front shooter");
@@ -170,7 +172,7 @@ namespace Game.Tests
             Assert.IsTrue(ServiceLocator.Get<IInputService>().Lock.IsLocked);
 
             // A tap while paused must not send a shooter.
-            var gameplay = (PixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
+            var gameplay = (IPixelLoopGameplay)AppDriver.Flow.ActiveGameplay;
             AppDriver.TapWorld(gameplay.TapPointFor(gameplay.Sim.Front(0)));
             Assert.AreEqual(0, gameplay.Moves);
             Assert.AreEqual(0, gameplay.Sim.Launches);

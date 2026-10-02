@@ -26,6 +26,7 @@ The flow handles everything else: HUD, pause, win/lose popups, rewards, progress
 ## Rules
 - Spawn level objects under `Context.WorldRoot` (it is destroyed when the level ends).
 - Use `Context.Tweens` / `Context.Clock` so pause works; never `Time.timeScale`.
+- `Context.Camera` may be reconfigured freely (e.g. a perspective 3D rig): the flow captures it with `CameraSnapshot` before `Begin` and restores it when the level is left. Restore any other global you change (RenderSettings, QualitySettings) in `Dispose`.
 - Call `Finish` exactly once. `ForceFinish(win)` is used by the debug console and tests; keep the base behaviour unless the game needs special handling.
 - Flow commands: `ServiceLocator.Get<GameFlow>().Play() / Pause() / Restart() / GoHome() / ForceFinish(win)`.
 

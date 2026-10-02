@@ -31,6 +31,8 @@ namespace HyperFrame.App
         IGameplay _gameplay;
         GameObject _world;
         InputRouter2D _router;
+        Camera _camera;
+        CameraSnapshot _cameraBefore;
         float _levelStartTime;
         bool _paused;
 
@@ -139,13 +141,15 @@ namespace HyperFrame.App
             if (_worldParent != null) _world.transform.SetParent(_worldParent, false);
             var input = S<IInputService>();
             _router = new InputRouter2D(input);
+            _camera = Camera.main;
+            _cameraBefore = CameraSnapshot.Capture(_camera);
 
             var context = new GameplayContext
             {
                 LevelIndex = CurrentLevelIndex,
                 Level = CurrentLevel,
                 WorldRoot = _world.transform,
-                Camera = Camera.main,
+                Camera = _camera,
                 Input = input,
                 Router = _router,
                 Feedback = S<IFeedbackService>(),
@@ -325,6 +329,14 @@ namespace HyperFrame.App
                 UnityEngine.Object.Destroy(_world);
                 _world = null;
             }
+            // A gameplay may have turned the camera into a 3D rig (or shaken it); put it back.
+            if (_camera != null)
+            {
+                S<TweenEngine>().KillTarget(_camera.transform);
+                _cameraBefore.Restore(_camera);
+            }
+            _camera = null;
+            _cameraBefore = default;
         }
 
         public void Dispose()

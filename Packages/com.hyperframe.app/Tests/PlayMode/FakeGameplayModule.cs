@@ -1,4 +1,5 @@
 using HyperFrame.Services;
+using UnityEngine;
 
 namespace HyperFrame.App.Tests
 {
@@ -6,11 +7,13 @@ namespace HyperFrame.App.Tests
     public sealed class FakeGameplayModule : GameplayModule
     {
         public int Created;
+        /// <summary>When set, each level turns the shared camera into a perspective rig (like a 3D game).</summary>
+        public bool UsePerspectiveCamera;
 
         public override IGameplay CreateGameplay()
         {
             Created++;
-            return new FakeGameplay();
+            return new FakeGameplay(UsePerspectiveCamera);
         }
 
         public override ILevelProvider CreateLevelProvider(GameDefinition definition) =>
@@ -20,7 +23,17 @@ namespace HyperFrame.App.Tests
 
         sealed class FakeGameplay : GameplayBase
         {
-            protected override void OnBegin() => Context.Hud.SetStatus("fake");
+            readonly bool _perspective;
+            public FakeGameplay(bool perspective) => _perspective = perspective;
+
+            protected override void OnBegin()
+            {
+                Context.Hud.SetStatus("fake");
+                if (!_perspective || Context.Camera == null) return;
+                Context.Camera.orthographic = false;
+                Context.Camera.fieldOfView = 35f;
+                Context.Camera.transform.SetPositionAndRotation(new Vector3(0f, 12f, -9f), Quaternion.Euler(55f, 0f, 0f));
+            }
         }
     }
 }
