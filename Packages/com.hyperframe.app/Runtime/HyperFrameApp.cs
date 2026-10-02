@@ -212,6 +212,7 @@ namespace HyperFrame.App
                 else
                 {
                     var table = def.sounds != null ? Instantiate(def.sounds) : ScriptableObject.CreateInstance<SoundTable>();
+                    def.gameplay.ConfigureSounds(table);
                     PlaceholderSounds.FillMissing(table);
                     audio = new AudioService(table, tweens, transform);
                 }

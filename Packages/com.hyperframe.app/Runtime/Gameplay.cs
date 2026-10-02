@@ -114,6 +114,13 @@ namespace HyperFrame.App
         /// <summary>Save migrations for this game's data (see ISaveMigration).</summary>
         public virtual IEnumerable<ISaveMigration> GetSaveMigrations() { yield break; }
 
+        /// <summary>
+        /// Called at boot with the game's (copied) SoundTable, before placeholder clips fill the standard IDs.
+        /// Add game sounds here, e.g. procedural placeholders, so gameplay never waits for audio assets.
+        /// Not called when audio is mocked (tests).
+        /// </summary>
+        public virtual void ConfigureSounds(SoundTable table) { }
+
         /// <summary>Called once at boot after framework services exist. Register game services here.</summary>
         public virtual void OnBoot() { }
 

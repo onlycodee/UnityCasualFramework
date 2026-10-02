@@ -6,7 +6,7 @@
 public sealed class MyModule : GameplayModule
 {
     public override IGameplay CreateGameplay() => new MyGameplay();
-    // Optional: CreateLevelProvider, ParseLevel, GetSaveMigrations, OnBoot, CalculateReward, DescribeDifficulty
+    // Optional: CreateLevelProvider, ParseLevel, GetSaveMigrations, ConfigureSounds, OnBoot, CalculateReward, DescribeDifficulty
 }
 
 public sealed class MyGameplay : GameplayBase

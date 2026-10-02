@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5702f6a3a9c34e62b8fc8954ad7c44ee, type: 3}
   m_Name: GameDefinition
   m_EditorClassIdentifier: 
-  gameId: tap_targets
-  gameTitle: Tap Targets
+  gameId: pixel_loop
+  gameTitle: Pixel Loop
   kits: []
-  gameplay: {fileID: 11400000, guid: 22387e65da994123a3055b169db4594a, type: 2}
+  gameplay: {fileID: 11400000, guid: d9dd7353a3d09ce4cc36cb0ea4d8ff20, type: 2}
   levels: {fileID: 0}
   theme: {fileID: 0}
   views: {fileID: 0}
