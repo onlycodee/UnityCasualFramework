@@ -19,3 +19,4 @@ Defaults picked so work could start; each can be revisited. "Open question" numb
 | 7 | WebGL playable before Game #2 | Not decided | Affects the async choice above. |
 | — | Service locator name | `ServiceLocator` (not `Services`) | `Services` collides with the `HyperFrame.Services` namespace inside framework code. |
 | — | Boot without scene wiring | `HyperFrameApp` auto-boots in the scene named `Boot` from `Resources/GameDefinition` | Scenes stay empty, so agents never edit scene YAML. `GameDefinition` lives in `Assets/_Game/Resources/` (PRD shows `Assets/_Game/`). |
+| — | CI | **Architecture check only**; Unity tests run on the developer's machine (2026-10-02) | Phuong builds and tests locally, so the GameCI jobs and Unity license secrets were dropped. Restore them per docs/SETUP.md §3 if CI should gate on Unity tests again. |

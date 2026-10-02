@@ -17,13 +17,12 @@
 3. `.mcp.json` in the repo root already points Claude Code at `http://localhost:8080/mcp`. Run `claude` in the repo root and check `/mcp`.
 4. Try `/verify`.
 
-## 3. CI (GitHub Actions + GameCI)
-`.github/workflows/ci.yml` runs the architecture check, then EditMode and PlayMode tests on every PR.
-Add repository secrets (Settings → Secrets and variables → Actions):
-- **Personal license**: `UNITY_LICENSE` (contents of the `.ulf` file), `UNITY_EMAIL`, `UNITY_PASSWORD`.
-  See https://game.ci/docs/github/activation for how to obtain the `.ulf`.
-- **Pro/Plus license**: `UNITY_SERIAL`, `UNITY_EMAIL`, `UNITY_PASSWORD`.
-Then protect `main` and require the "Unity editmode tests" and "Unity playmode tests" checks (TS-04).
+## 3. CI (GitHub Actions)
+`.github/workflows/ci.yml` runs only the architecture check (no Unity, no secrets) on every PR and push to `main`.
+Unity EditMode/PlayMode tests run locally with the Editor closed: `Tools\ci\run-tests.ps1 all` on Windows,
+`Tools/ci/run-tests.sh all` on macOS/Linux, or *Window → General → Test Runner* in the Editor.
+To bring Unity tests back to CI, re-add a GameCI `unity-test-runner` job and the license secrets
+(`UNITY_EMAIL`, `UNITY_PASSWORD`, plus `UNITY_SERIAL` for Pro/Plus); see https://game.ci/docs/github/getting-started.
 
 ## 4. Using HyperFrame in a new game project
 Reference the packages by git URL in the game's `Packages/manifest.json`:
