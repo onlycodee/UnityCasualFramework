@@ -23,7 +23,8 @@ $ARGUMENTS may narrow the scope (e.g. a test name filter); otherwise run everyth
 5. **Report** — what changed, test totals (pass/fail per platform), screenshot findings, open issues.
 
 ### Fallback when the Unity MCP server is not connected
-Close the Unity Editor (it locks the project), then run `Tools/ci/run-tests.sh all`. It compiles, runs both
+Close the Unity Editor (it locks the project), then run `Tools/ci/run-tests.sh all`
+(Windows: `powershell -ExecutionPolicy Bypass -File Tools\ci\run-tests.ps1 all`). It compiles, runs both
 test platforms in batchmode and prints `artifacts/summary.md`. Screenshots are skipped in this mode; say so in the report.
 
 ### Tool names

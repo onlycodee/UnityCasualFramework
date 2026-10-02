@@ -46,7 +46,7 @@ Tools/ci                           architecture check, batchmode test runner, re
 1. Read `Assets/_Game/Resources/GameDefinition.asset`, `RECIPES.md` and the relevant `AGENTS.md`.
 2. Make the change, with tests.
 3. Run **/verify** (architecture check → compile → EditMode → PlayMode → screenshots). Without the Unity MCP
-   bridge use `Tools/ci/run-tests.sh all` (Editor closed).
+   bridge use `Tools/ci/run-tests.sh all` (Windows: `Tools\ci\run-tests.ps1 all`), Editor closed.
 4. Report: what changed, test results, screenshots, open issues.
 
 ## Forbidden without asking the user
